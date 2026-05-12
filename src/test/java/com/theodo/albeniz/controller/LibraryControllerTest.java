@@ -8,12 +8,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theodo.albeniz.dto.Tune;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collection;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +30,11 @@ public class LibraryControllerTest {
     @Test()
     @Description("it should return the full library of music")
     public void testGetMusicsRoute() throws Exception {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        Collection<Tune> expectedFullLibrary = List.of(
+                new Tune(1, "Thriller", "Michael J."),
+                new Tune(2, "Uptown Funk", "Bruno M."),
+                new Tune(3, "The Little Foam Man", "Patrick S."));
         mockMvc.perform(get("/library/music")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -36,12 +45,14 @@ public class LibraryControllerTest {
     }
 
     @Test()
-    @Description("it should returns the correct information for an existing music")
+    @Description("it should returns the information for an existing music")
     public void testGetOneMusic() throws Exception {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        Tune expectedTune = new Tune(2, "Uptown Funk", "Bruno M.");
         mockMvc.perform(get("/library/music/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"id\": 2,\"title\": \"Uptown Funk\",\"author\": \"Bruno M.\"}"));
+                .andExpect(content().json(jsonMapper.writeValueAsString(expectedTune)));
     }
 
     @Test()
@@ -57,9 +68,11 @@ public class LibraryControllerTest {
     @Test()
     @Description("it should return musics where title contains 'up' (not case-sensitive) ")
     public void testGetMusicsWhereTitleContainsUp() throws Exception {
+        ObjectMapper jsonMapper = new ObjectMapper();
+        Collection<Tune> expectedTunes = List.of(new Tune(2, "Uptown Funk", "Bruno M."));
         MvcResult mvcResponse = mockMvc.perform(get("/library/music?title=up").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         String mvcContentStr = mvcResponse.getResponse().getContentAsString();
-        assertEquals(mvcContentStr, "[{\"id\":2,\"title\":\"Uptown Funk\",\"author\":\"Bruno M.\"}]");
+        assertEquals(mvcContentStr, jsonMapper.writeValueAsString(expectedTunes));
     }
 }
