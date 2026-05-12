@@ -3,8 +3,14 @@ package com.theodo.albeniz.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import com.theodo.albeniz.dto.Tune;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,13 +23,34 @@ public class LibraryControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void testGetMusicRoute() throws Exception {
+    @Test()
+    @Description("it should return the full library of music")
+    public void testGetMusicsRoute() throws Exception {
         mockMvc.perform(get("/library/music")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
-                        "[{'title':'Blip','author':'Zizou'},{'title':'Blap','author':'Schuman'}]"));
+                        "[{\"id\": 1,\"title\": \"Thriller\",\"author\": \"Michael J.\"},"
+                                + "{\"id\": 2,\"title\": \"Uptown Funk\",\"author\": \"Bruno M.\"},"
+                                + "{\"id\": 3,\"title\": \"The Little Foam Man\",\"author\": \"Patrick S.\"}]"));
     }
 
+    @Test()
+    @Description("it should returns the correct information for an existing music")
+    public void testGetMusicRoute() throws Exception {
+        mockMvc.perform(get("/library/music/2")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"id\": 2,\"title\": \"Uptown Funk\",\"author\": \"Bruno M.\"}"));
+    }
+
+    @Test()
+    @Description("it should return an empty JSON string for an non-existing music")
+    public void testGetMusicRoute_noMatch() throws Exception {
+        MvcResult mvcResponse = mockMvc.perform(get("/library/music/14")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        String mvcResponseContentStr = mvcResponse.getResponse().getContentAsString();
+        assertEquals("", mvcResponseContentStr);
+    }
 }
