@@ -37,7 +37,7 @@ public class LibraryControllerTest {
 
     @Test()
     @Description("it should returns the correct information for an existing music")
-    public void testGetMusicRoute() throws Exception {
+    public void testGetOneMusic() throws Exception {
         mockMvc.perform(get("/library/music/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -46,11 +46,20 @@ public class LibraryControllerTest {
 
     @Test()
     @Description("it should return an empty JSON string for an non-existing music")
-    public void testGetMusicRoute_noMatch() throws Exception {
+    public void testGetNotExistingMusic() throws Exception {
         MvcResult mvcResponse = mockMvc.perform(get("/library/music/14")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         String mvcResponseContentStr = mvcResponse.getResponse().getContentAsString();
         assertEquals("", mvcResponseContentStr);
+    }
+
+    @Test()
+    @Description("it should return musics where title contains 'up' (not case-sensitive) ")
+    public void testGetMusicsWhereTitleContainsUp() throws Exception {
+        MvcResult mvcResponse = mockMvc.perform(get("/library/music?title=up").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+        String mvcContentStr = mvcResponse.getResponse().getContentAsString();
+        assertEquals(mvcContentStr, "[{\"id\":2,\"title\":\"Uptown Funk\",\"author\":\"Bruno M.\"}]");
     }
 }

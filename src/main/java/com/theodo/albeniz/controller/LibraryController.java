@@ -28,8 +28,13 @@ public class LibraryController {
     }
 
     @GetMapping("/music")
-    public Collection<Tune> getMusics(@RequestParam(required = false) String query) {
-        return LIBRARY.values();
+    public Collection<Tune> getMusics(@RequestParam(required = false) String title) {
+        if (title == null) {
+            return LIBRARY.values();
+        }
+        return LIBRARY.values().stream()
+                .filter(tune -> tune.getTitle().toLowerCase().contains(title.toLowerCase()))
+                .toList();
     }
 
     @GetMapping("/music/{id}")
