@@ -15,10 +15,12 @@ import com.theodo.albeniz.dto.Tune;
 import com.theodo.albeniz.services.InDatabaseLibraryService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -61,5 +63,40 @@ public class InDatabaseLibraryControllerTest {
                 String contentAfterAdd = responseAfterAdd.getResponse().getContentAsString();
                 Tune expectedTune = new Tune(UUID.fromString(addedId), tuneToAdd.getTitle(), tuneToAdd.getAuthor());
                 assertEquals(jsonMapper.writeValueAsString(expectedTune), contentAfterAdd);
+        }
+
+        @Test()
+        @Description("it should add a tune to an empty library, then delete it")
+        public void testDeleteTune() throws Exception {
+                MvcResult getLibraryBeforeAddResult = mockMvc
+                                .perform(get("/library/music").contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk()).andReturn();
+                String getLibraryBeforeAddContent = getLibraryBeforeAddResult.getResponse().getContentAsString();
+                assertEquals("[]", getLibraryBeforeAddContent);
+
+                ObjectMapper jsonMapper = new ObjectMapper();
+                Tune newTune = new Tune(UUID.randomUUID(), "Holiday", "Green Day");
+                MvcResult postAddTuneToLibraryResult = mockMvc
+                                .perform(post("/library/music").content(jsonMapper.writeValueAsString(newTune))
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk()).andReturn();
+                String newlyAddedTuneId = postAddTuneToLibraryResult.getResponse().getContentAsString();
+                MvcResult getLibraryAfterAddResult = mockMvc
+                                .perform(get("/library/music").contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk()).andReturn();
+                String getLibraryAfterAddContent = getLibraryAfterAddResult.getResponse().getContentAsString();
+                assertEquals(jsonMapper.writeValueAsString(
+                                List.of(new Tune(UUID.fromString(newlyAddedTuneId), newTune.getTitle(),
+                                                newTune.getAuthor()))),
+                                getLibraryAfterAddContent);
+
+                mockMvc.perform(delete("/library/music/" + newlyAddedTuneId).contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk());
+                MvcResult getLibraryAfterDeleteResult = mockMvc
+                                .perform(get("/library/music").contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk()).andReturn();
+                String getLibraryAfterDeleteContent = getLibraryAfterDeleteResult.getResponse().getContentAsString();
+                assertEquals("[]", getLibraryAfterDeleteContent);
+
         }
 }

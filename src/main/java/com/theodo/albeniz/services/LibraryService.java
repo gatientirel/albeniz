@@ -13,4 +13,6 @@ public interface LibraryService {
 
     UUID addTune(Tune tune);
 
+    void deleteTune(UUID id);
+
 }

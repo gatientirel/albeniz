@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,10 @@ public class LibraryController {
     @PostMapping("/music")
     public String addMusic(@Valid() @RequestBody(required = true) Tune tune) {
         return libraryService.addTune(tune).toString();
+    }
+
+    @DeleteMapping("music/{id}")
+    public void deleteMusic(@PathVariable() UUID id) {
+        libraryService.deleteTune(id);
     }
 }

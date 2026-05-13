@@ -9,7 +9,7 @@ public class NotChildrenSongValidation implements ConstraintValidator<NotAChildr
 
     @Override
     public boolean isValid(Tune value, ConstraintValidatorContext context) {
-        return value.getAuthor() != "Chantal G.";
+        return !value.getAuthor().equals("Chantal G.");
     }
 
 }

@@ -49,4 +49,8 @@ public class InMemoryLibraryService implements LibraryService {
         return null;
     }
 
+    @Override
+    public void deleteTune(UUID id) {
+    }
+
 }
