@@ -2,13 +2,15 @@ package com.theodo.albeniz.dto;
 
 import java.util.UUID;
 
+import com.theodo.albeniz.validators.notChildrenSongValidation.NotAChildrenSong;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor()
+@NotAChildrenSong()
 public class Tune {
     @Getter()
     @Setter()
