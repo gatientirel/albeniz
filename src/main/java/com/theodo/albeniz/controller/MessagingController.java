@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.theodo.albeniz.services.messaging.MessagingService;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 @RestController()
 @RequestMapping("/message")
+@Hidden()
 public class MessagingController {
     private final MessagingService messagingService;
 
