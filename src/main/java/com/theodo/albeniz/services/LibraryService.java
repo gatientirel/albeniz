@@ -10,4 +10,6 @@ public interface LibraryService {
 
     Tune getOne(int id);
 
+    void addTune(Tune tune);
+
 }

@@ -11,7 +11,7 @@ import com.theodo.albeniz.dto.Tune;
 
 @Service("inMemoryLibraryService")
 @Profile("memory")
-public class InMemoryLibraryServiceMock implements LibraryService {
+public class InMemoryLibraryService implements LibraryService {
     // NB: Service should be stateless, but here it simulates a database so let's
     // pretend it's okay
     private final static Map<Integer, Tune> LIBRARY = new HashMap<>();
@@ -36,6 +36,10 @@ public class InMemoryLibraryServiceMock implements LibraryService {
     @Override
     public Tune getOne(int id) {
         return LIBRARY.get(id);
+    }
+
+    @Override
+    public void addTune(Tune tune) {
     }
 
 }
