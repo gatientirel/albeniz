@@ -1,5 +1,7 @@
 package com.theodo.albeniz.dto;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +10,7 @@ import lombok.Setter;
 public class Tune {
     @Getter()
     @Setter()
-    private int id;
+    private UUID id;
 
     @Getter()
     @Setter()

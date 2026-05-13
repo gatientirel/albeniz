@@ -1,6 +1,7 @@
 package com.theodo.albeniz.services;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import com.theodo.albeniz.dto.Tune;
 
@@ -8,8 +9,8 @@ public interface LibraryService {
 
     Collection<Tune> getAll(String query);
 
-    Tune getOne(int id);
+    Tune getOne(UUID id);
 
-    void addTune(Tune tune);
+    UUID addTune(Tune tune);
 
 }

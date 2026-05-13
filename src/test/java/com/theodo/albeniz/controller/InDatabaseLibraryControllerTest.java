@@ -13,16 +13,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theodo.albeniz.dto.Tune;
 import com.theodo.albeniz.services.InDatabaseLibraryService;
-import com.theodo.albeniz.services.InMemoryLibraryService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
@@ -35,29 +32,34 @@ public class InDatabaseLibraryControllerTest {
         private MockMvc mockMvc;
 
         @Test()
-        @Description("it should return the full library of music")
-        public void testGetMusicsRoute() throws Exception {
+        @Description("it should add a new tune to the music library")
+        public void testAddMusicRoute() throws Exception {
                 ObjectMapper jsonMapper = new ObjectMapper();
-                Tune tuneToAdd = new Tune(4, "Hasta la vista", "PNL");
+                Tune tuneToAdd = new Tune(UUID.randomUUID(), "Hasta la vista", "PNL");
 
                 MvcResult responseBeforeAdd = mockMvc
-                                .perform(get("/library/music/4").contentType(MediaType.APPLICATION_JSON))
+                                .perform(get("/library/music/" + tuneToAdd.getId())
+                                                .contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isOk())
                                 .andReturn();
                 String contentBeforeAdd = responseBeforeAdd.getResponse().getContentAsString();
                 assertEquals("", contentBeforeAdd);
 
-                mockMvc.perform(
+                MvcResult postResult = mockMvc.perform(
                                 post("/library/music")
                                                 .content(jsonMapper.writeValueAsString(tuneToAdd))
                                                 .contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(status().isOk());
+                                .andExpect(status().isOk())
+                                .andReturn();
+                String addedId = postResult.getResponse().getContentAsString();
 
                 MvcResult responseAfterAdd = mockMvc
-                                .perform(get("/library/music/4").contentType(MediaType.APPLICATION_JSON))
+                                .perform(get("/library/music/" + UUID.fromString(addedId))
+                                                .contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isOk())
                                 .andReturn();
                 String contentAfterAdd = responseAfterAdd.getResponse().getContentAsString();
-                assertEquals(jsonMapper.writeValueAsString(tuneToAdd), contentAfterAdd);
+                Tune expectedTune = new Tune(UUID.fromString(addedId), tuneToAdd.getTitle(), tuneToAdd.getAuthor());
+                assertEquals(jsonMapper.writeValueAsString(expectedTune), contentAfterAdd);
         }
 }

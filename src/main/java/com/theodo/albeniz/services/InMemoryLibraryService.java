@@ -3,6 +3,7 @@ package com.theodo.albeniz.services;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,18 @@ import com.theodo.albeniz.dto.Tune;
 public class InMemoryLibraryService implements LibraryService {
     // NB: Service should be stateless, but here it simulates a database so let's
     // pretend it's okay
-    private final static Map<Integer, Tune> LIBRARY = new HashMap<>();
+    private final static Map<UUID, Tune> LIBRARY = new HashMap<UUID, Tune>();
 
     static {
         // ADD static values (temporary)
-        LIBRARY.put(1, new Tune(1, "Thriller", "Michael J."));
-        LIBRARY.put(2, new Tune(2, "Uptown Funk", "Bruno M."));
-        LIBRARY.put(3, new Tune(3, "The Little Foam Man", "Patrick S."));
+        staticallyAddTune(new Tune(UUID.fromString("534a2bce-2fb2-42ea-9aeb-044799289101"), "Thriller", "Michael J."));
+        staticallyAddTune(new Tune(UUID.fromString("2d156098-78ea-44ca-bb00-aef7060d9ee4"), "Uptown Funk", "Bruno M."));
+        staticallyAddTune(
+                new Tune(UUID.fromString("8bb497fc-69a7-4faa-84c8-668490e9dd73"), "The Little Foam Man", "Patrick S."));
+    }
+
+    private static void staticallyAddTune(Tune tune) {
+        LIBRARY.put(tune.getId(), tune);
     }
 
     @Override
@@ -34,12 +40,13 @@ public class InMemoryLibraryService implements LibraryService {
     }
 
     @Override
-    public Tune getOne(int id) {
+    public Tune getOne(UUID id) {
         return LIBRARY.get(id);
     }
 
     @Override
-    public void addTune(Tune tune) {
+    public UUID addTune(Tune tune) {
+        return null;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.theodo.albeniz.controller;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,12 +31,12 @@ public class LibraryController {
     }
 
     @GetMapping("/music/{id}")
-    public Tune getMusic(@PathVariable() int id) {
+    public Tune getMusic(@PathVariable() UUID id) {
         return libraryService.getOne(id);
     }
 
     @PostMapping("/music")
-    public void addMusic(@RequestBody(required = true) Tune tune) {
-        libraryService.addTune(tune);
+    public String addMusic(@RequestBody(required = true) Tune tune) {
+        return libraryService.addTune(tune).toString();
     }
 }
