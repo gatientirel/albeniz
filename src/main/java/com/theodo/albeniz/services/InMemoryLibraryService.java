@@ -50,7 +50,18 @@ public class InMemoryLibraryService implements LibraryService {
     }
 
     @Override
-    public void deleteTune(UUID id) {
+    public boolean deleteTune(UUID id) {
+        return false;
+    }
+
+    @Override
+    public boolean isExist(UUID id) {
+        return LIBRARY.containsKey(id);
+    }
+
+    @Override
+    public boolean modifyTune(Tune tune) {
+        return false;
     }
 
 }

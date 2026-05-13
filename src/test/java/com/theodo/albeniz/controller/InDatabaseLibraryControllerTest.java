@@ -3,7 +3,6 @@ package com.theodo.albeniz.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @WebMvcTest(controllers = LibraryController.class)
@@ -34,7 +35,7 @@ public class InDatabaseLibraryControllerTest {
         private MockMvc mockMvc;
 
         @Test()
-        @Description("it should add a new tune to the music library")
+        @DisplayName("it should add a new tune to the music library")
         public void testAddMusicRoute() throws Exception {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 Tune tuneToAdd = new Tune(UUID.randomUUID(), "Hasta la vista", "PNL");
@@ -42,7 +43,7 @@ public class InDatabaseLibraryControllerTest {
                 MvcResult responseBeforeAdd = mockMvc
                                 .perform(get("/library/music/" + tuneToAdd.getId())
                                                 .contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(status().isOk())
+                                .andExpect(status().isNotFound())
                                 .andReturn();
                 String contentBeforeAdd = responseBeforeAdd.getResponse().getContentAsString();
                 assertEquals("", contentBeforeAdd);
@@ -66,7 +67,7 @@ public class InDatabaseLibraryControllerTest {
         }
 
         @Test()
-        @Description("it should add a tune to an empty library, then delete it")
+        @DisplayName("it should add a tune to an empty library, then delete it")
         public void testDeleteTune() throws Exception {
                 MvcResult getLibraryBeforeAddResult = mockMvc
                                 .perform(get("/library/music").contentType(MediaType.APPLICATION_JSON))
@@ -98,5 +99,24 @@ public class InDatabaseLibraryControllerTest {
                 String getLibraryAfterDeleteContent = getLibraryAfterDeleteResult.getResponse().getContentAsString();
                 assertEquals("[]", getLibraryAfterDeleteContent);
 
+        }
+
+        @Test()
+        @DisplayName("it should return a NOT_FOUND status")
+        public void testGetInexistingMusic() throws Exception {
+                mockMvc.perform(get("/library/music/" + UUID.randomUUID())).andExpect(status().isNotFound());
+        }
+
+        @Test()
+        @DisplayName("it should return a NOT_FOUND status and a message in the body")
+        public void testModifyInexistantMusic() throws Exception {
+                ObjectMapper jsonMapper = new ObjectMapper();
+                mockMvc.perform(
+                                put("/library/music")
+                                                .content(jsonMapper.writeValueAsString(new Tune(UUID.randomUUID(),
+                                                                "SLEEP WHEN IM DEAD", "Kami Kehoe")))
+                                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isNotFound())
+                                .andReturn();
         }
 }

@@ -13,6 +13,17 @@ public interface LibraryService {
 
     UUID addTune(Tune tune);
 
-    void deleteTune(UUID id);
+    boolean deleteTune(UUID id);
+
+    boolean isExist(UUID id);
+
+    /**
+     * Modifies an existing tune in the library.
+     *
+     * @param tune the tune to modify, matched by its ID
+     * @return {@code true} if the tune existed and was successfully modified,
+     *         {@code false} otherwise
+     */
+    boolean modifyTune(Tune tune);
 
 }

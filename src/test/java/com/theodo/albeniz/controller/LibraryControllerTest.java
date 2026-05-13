@@ -68,7 +68,7 @@ public class LibraryControllerTest {
         public void testGetNotExistingMusic() throws Exception {
                 MvcResult mvcResponse = mockMvc.perform(get("/library/music/" + UUID.randomUUID())
                                 .contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(status().isOk()).andReturn();
+                                .andExpect(status().isNotFound()).andReturn();
                 String mvcResponseContentStr = mvcResponse.getResponse().getContentAsString();
                 assertEquals("", mvcResponseContentStr);
         }

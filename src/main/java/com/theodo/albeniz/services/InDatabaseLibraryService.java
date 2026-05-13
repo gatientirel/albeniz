@@ -38,7 +38,24 @@ public class InDatabaseLibraryService implements LibraryService {
     }
 
     @Override
-    public void deleteTune(UUID id) {
-        LIBRARY.remove(id);
+    public boolean deleteTune(UUID id) {
+        Tune deletedTune = LIBRARY.remove(id);
+        return !deletedTune.equals(null);
     }
+
+    @Override
+    public boolean isExist(UUID id) {
+        return LIBRARY.containsKey(id);
+    }
+
+    @Override
+    public boolean modifyTune(Tune tune) {
+        if (isExist(tune.getId())) {
+            LIBRARY.put(tune.getId(), tune);
+            return true;
+        }
+        return false;
+
+    }
+
 }
