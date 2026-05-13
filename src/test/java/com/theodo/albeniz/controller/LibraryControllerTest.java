@@ -6,12 +6,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theodo.albeniz.dto.Tune;
-import com.theodo.albeniz.services.LibraryService;
+import com.theodo.albeniz.services.DataLibraryService;
+import com.theodo.albeniz.services.InMemoryLibraryServiceMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,9 +25,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-@WebMvcTest()
+@WebMvcTest(controllers = LibraryController.class)
 @AutoConfigureMockMvc()
-@Import({ LibraryService.class })
+@Import(value = { InMemoryLibraryServiceMock.class, DataLibraryService.class })
+@ActiveProfiles(profiles = "memory")
 public class LibraryControllerTest {
         @Autowired
         private MockMvc mockMvc;

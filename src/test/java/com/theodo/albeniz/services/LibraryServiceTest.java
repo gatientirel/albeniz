@@ -16,7 +16,7 @@ public class LibraryServiceTest {
     @Test()
     @Description("it should return all tunes in library")
     void testGetAllMethod() throws Exception {
-        LibraryService service = new LibraryService();
+        LibraryService service = new InMemoryLibraryServiceMock();
         ObjectMapper mapper = new ObjectMapper();
         Collection<Tune> expectedLibrary = List.of(
                 new Tune(1, "Thriller", "Michael J."),
@@ -30,7 +30,7 @@ public class LibraryServiceTest {
     @Test()
     @Description("it should return all tunes in library with title containing 'foam' ")
     void testGetAllWithQueryMethod() throws Exception {
-        LibraryService service = new LibraryService();
+        LibraryService service = new InMemoryLibraryServiceMock();
         ObjectMapper mapper = new ObjectMapper();
         Collection<Tune> expectedTunes = List.of(new Tune(3, "The Little Foam Man", "Patrick S."));
         assertEquals(
@@ -41,7 +41,7 @@ public class LibraryServiceTest {
     @Test()
     @Description("it should return tune with id 1")
     void testGetOneMethod() throws Exception {
-        LibraryService service = new LibraryService();
+        LibraryService service = new InMemoryLibraryServiceMock();
         ObjectMapper mapper = new ObjectMapper();
         Tune expectedTune = new Tune(1, "Thriller", "Michael J.");
         assertEquals(

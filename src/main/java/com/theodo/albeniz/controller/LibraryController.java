@@ -1,9 +1,8 @@
 package com.theodo.albeniz.controller;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import com.theodo.albeniz.services.LibraryService;
 
 import lombok.RequiredArgsConstructor;
 
+@Qualifier("inMemoryLibraryService")
 @RestController()
 @RequestMapping("/library")
 @RequiredArgsConstructor()
