@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.theodo.albeniz.dto.Tune;
 import com.theodo.albeniz.services.LibraryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Qualifier("inMemoryLibraryService")
@@ -36,7 +37,7 @@ public class LibraryController {
     }
 
     @PostMapping("/music")
-    public String addMusic(@RequestBody(required = true) Tune tune) {
+    public String addMusic(@Valid() @RequestBody(required = true) Tune tune) {
         return libraryService.addTune(tune).toString();
     }
 }

@@ -16,6 +16,7 @@ import com.theodo.albeniz.services.InMemoryLibraryService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,5 +84,15 @@ public class LibraryControllerTest {
                                 .andExpect(status().isOk()).andReturn();
                 String mvcContentStr = mvcResponse.getResponse().getContentAsString();
                 assertEquals(mvcContentStr, jsonMapper.writeValueAsString(expectedTunes));
+        }
+
+        @Test()
+        @Description("it should return an error message saying that title cannot be empty")
+        public void testTitleValidationOnAddTune() throws Exception {
+                ObjectMapper jsonMapper = new ObjectMapper();
+                Tune emptyTitleTune = new Tune(UUID.randomUUID(), null, "Someone");
+                mockMvc.perform(post("/library/music").content(jsonMapper.writeValueAsString(emptyTitleTune))
+                                .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isBadRequest());
         }
 }
