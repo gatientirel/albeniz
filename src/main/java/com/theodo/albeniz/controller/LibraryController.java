@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,5 +32,10 @@ public class LibraryController {
     @GetMapping("/music/{id}")
     public Tune getMusic(@PathVariable() int id) {
         return libraryService.getOne(id);
+    }
+
+    @PostMapping("/music")
+    public void addMusic(@RequestBody(required = true) Tune tune) {
+        libraryService.addTune(tune);
     }
 }

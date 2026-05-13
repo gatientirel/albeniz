@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theodo.albeniz.dto.Tune;
-import com.theodo.albeniz.services.InDatabaseLibraryService;
 import com.theodo.albeniz.services.InMemoryLibraryService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 @WebMvcTest(controllers = LibraryController.class)
 @AutoConfigureMockMvc()
-@Import(value = { InMemoryLibraryService.class, InDatabaseLibraryService.class })
+@Import(value = { InMemoryLibraryService.class })
 @ActiveProfiles(profiles = "memory")
 public class LibraryControllerTest {
         @Autowired
