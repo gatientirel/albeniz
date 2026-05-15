@@ -1,20 +1,28 @@
 package com.theodo.albeniz.dto;
 
+import java.util.UUID;
+
+import com.theodo.albeniz.validators.notChildrenSongValidation.NotAChildrenSong;
+
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @AllArgsConstructor()
+@NotAChildrenSong()
 public class Tune {
     @Getter()
     @Setter()
-    private int id;
+    private UUID id;
 
     @Getter()
     @Setter()
+    @NotBlank(message = "Title is mandatory")
     private String title;
 
     @Getter()
     @Setter()
+    @NotBlank(message = "Auhtor is mandatory")
     private String author;
 }
