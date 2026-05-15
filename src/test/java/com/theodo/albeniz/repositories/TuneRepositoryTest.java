@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,20 +46,27 @@ class TuneRepositoryTest {
     }
 
     @Test
+    @Sql(statements = "INSERT INTO TUNE(ID, TITLE, AUTHOR) " +
+            "VALUES " +
+            "   ('f48ae564-9574-417d-b458-7933cc824f56', 'AABCC', '1111')," +
+            "   ('4577650d-b40d-4c72-9d39-c6916ad063c7', 'ABC', '2222')," +
+            "   ('a9900fc6-e4f1-4a66-aa17-d66fc10339c0', 'XXXXX', 1111)" +
+            ";")
     public void testLIKE() {
-        tuneRepository.save(new TuneEntity(null, "AABCC", "1111", "d"));
-        tuneRepository.save(new TuneEntity(null, "ABC", "2222", "g"));
-        tuneRepository.save(new TuneEntity(null, "XXXXX", "3333", "j"));
+        // tuneRepository.save(new TuneEntity(null, "AABCC", "1111", "d"));
+        // tuneRepository.save(new TuneEntity(null, "ABC", "2222", "g"));
+        // tuneRepository.save(new TuneEntity(null, "XXXXX", "3333", "j"));
 
         List<TuneEntity> tunes = tuneRepository.searchBy("ABC", Pageable.ofSize(100));
         assertThat(tunes.size()).isEqualTo(2);
     }
 
     @Test
-    public void testSeachByAuthor() {
-        tuneRepository.save(new TuneEntity(null, "AABCC", "1111", "d"));
-        tuneRepository.save(new TuneEntity(null, "ABC", "2222", "g"));
-        tuneRepository.save(new TuneEntity(null, "XXXXX", "1111", "j"));
+    @Sql(scripts = { "classpath:/fixtures/dummy_tunes.sql" })
+    public void testSearchByAuthor() {
+        // tuneRepository.save(new TuneEntity(null, "AABCC", "1111", "d"));
+        // tuneRepository.save(new TuneEntity(null, "ABC", "2222", "g"));
+        // tuneRepository.save(new TuneEntity(null, "XXXXX", "1111", "j"));
 
         List<TuneEntity> tunes = tuneRepository.findByAuthor("1111");
         assertThat(tunes.size()).isEqualTo(2);
