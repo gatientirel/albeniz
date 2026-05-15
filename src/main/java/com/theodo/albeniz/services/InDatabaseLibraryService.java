@@ -30,7 +30,7 @@ public class InDatabaseLibraryService implements LibraryService {
         PageRequest pageRequest = PageRequest.of(0, applicationConfig.getApi().getMaxCollection(),
                 Sort.by(direction, "title"));
 
-        if(query != null) {
+        if (query != null) {
             List<TuneEntity> tuneEntities = tuneRepository.searchBy(query, pageRequest);
             return tuneEntities.stream().map(tuneMapper::from).collect(Collectors.toList());
         } else {
@@ -67,7 +67,7 @@ public class InDatabaseLibraryService implements LibraryService {
 
     @Override
     public boolean modifyTune(Tune tune) {
-        if(isExist(tune.getId())){
+        if (isExist(tune.getId())) {
             tuneRepository.save(tuneMapper.from(tune));
             return true;
         }
