@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: albeniz
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+  servlet:
+    context-path: /albeniz
+
+management:
+  endpoints:
+    web:
+      base-path: /tooling
+
+application:
+  api:
+    maxCollection: 11
+    ascending: false
