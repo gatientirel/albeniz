@@ -5,6 +5,16 @@ info:
 spring:
   application:
     name: albeniz-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/albeniz_db
+    driverClassName: org.postgresql.Driver
+    username: myDatabaseAdminUser
+    password: aGivenAdminPassword
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 # Change Actuator base URI
 management:
@@ -14,12 +24,16 @@ management:
       exposure:
         include: "health,info"
 
+# Liquibase
+liquibase:
+  user: myDatabaseAdminUser
+  password: aGivenAdminPassword
+
 ## Change Server base context
 server:
   error.whitelabel.enabled: false
   servlet:
     context-path: /albeniz
-
 
 application:
   api:

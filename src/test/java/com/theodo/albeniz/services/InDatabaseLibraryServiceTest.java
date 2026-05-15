@@ -30,7 +30,8 @@ class InDatabaseLibraryServiceTest {
 
     @Test
     public void testAllMethods() {
-        InDatabaseLibraryService libraryService = new InDatabaseLibraryService(createMockConfiguration(), tuneRepository, tuneMapper);
+        InDatabaseLibraryService libraryService = new InDatabaseLibraryService(createMockConfiguration(),
+                tuneRepository, tuneMapper);
         assertEquals(0, libraryService.getAll(null).size());
 
         UUID uuid1 = libraryService.addTune(new Tune(null, "Hello", "World Singers"));
@@ -46,7 +47,8 @@ class InDatabaseLibraryServiceTest {
 
     @Test
     public void testRemove() {
-        InDatabaseLibraryService libraryService = new InDatabaseLibraryService(createMockConfiguration(), tuneRepository, tuneMapper);
+        InDatabaseLibraryService libraryService = new InDatabaseLibraryService(createMockConfiguration(),
+                tuneRepository, tuneMapper);
         assertEquals(0, libraryService.getAll(null).size());
 
         UUID uuid1 = libraryService.addTune(new Tune(null, "Hello", "World Singers"));
@@ -100,7 +102,8 @@ class InDatabaseLibraryServiceTest {
 
     @Test
     public void testGetByAuthor() {
-        InDatabaseLibraryService libraryService = new InDatabaseLibraryService(createMockConfiguration(), tuneRepository, tuneMapper);
+        InDatabaseLibraryService libraryService = new InDatabaseLibraryService(createMockConfiguration(),
+                tuneRepository, tuneMapper);
         assertEquals(0, libraryService.getAll(null).size());
 
         libraryService.addTune(new Tune(null, "Hello", "World Singers"));
@@ -112,7 +115,8 @@ class InDatabaseLibraryServiceTest {
     }
 
     private InDatabaseLibraryService createLibraryWithManyTunes(ApplicationConfig applicationConfig) {
-        InDatabaseLibraryService dataLibraryService = new InDatabaseLibraryService(applicationConfig, tuneRepository, tuneMapper);
+        InDatabaseLibraryService dataLibraryService = new InDatabaseLibraryService(applicationConfig, tuneRepository,
+                tuneMapper);
         for (int i = 0; i < 100; i++) {
             dataLibraryService.addTune(new Tune(UUID.randomUUID(), "Tune:" + i, "Me"));
         }
