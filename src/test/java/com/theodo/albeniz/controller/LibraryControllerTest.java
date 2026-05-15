@@ -1,5 +1,6 @@
 package com.theodo.albeniz.controller;
 
+import com.theodo.albeniz.config.WebSecurityConfiguration;
 import com.theodo.albeniz.services.InMemoryLibraryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = LibraryController.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("memory")
-@Import(value = {InMemoryLibraryService.class})
+@Import(value = { InMemoryLibraryService.class, WebSecurityConfiguration.class })
 class LibraryControllerTest {
 
     @Autowired
@@ -38,25 +39,24 @@ class LibraryControllerTest {
                                     {'title':'Prelude and Fugue in C minor','author':'Bach'},
                                     {'title':'The Little Foam Man','author':'Patrick S.'}
                                 ]
-                                """
-                ));
+                                """));
     }
 
     @Test
     public void testGetOneTune() throws Exception {
-        mockMvc.perform(get("/library/music/f1c236cb-3ee5-47e8-9034-d3ebf85a6b76").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(
+                get("/library/music/f1c236cb-3ee5-47e8-9034-d3ebf85a6b76").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                         """
                                     {'title':'Prelude and Fugue in C minor','author':'Bach'}
-                                """
-                ));
+                                """));
     }
 
     @Test
     public void testGetOneTuneNotExisting() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/library/music/" + UUID.randomUUID())
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound()).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         assertEquals("", contentAsString);
@@ -65,7 +65,7 @@ class LibraryControllerTest {
     @Test
     public void findMusic() throws Exception {
         mockMvc.perform(get("/library/music?query=iller")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                         """
