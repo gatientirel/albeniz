@@ -67,4 +67,10 @@ public class LibraryController {
         libraryService.modifyTune(tune);
         return libraryService.getOne(tune.getId());
     }
+
+    @GetMapping("byAuthor")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Tune> getMusicFromAuthor(@RequestParam(name = "author", required = true) String author) {
+        return libraryService.getByAuthor(author);
+    }
 }

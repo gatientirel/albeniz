@@ -7,30 +7,44 @@ import com.theodo.albeniz.model.TuneEntity;
 import com.theodo.albeniz.repositories.TuneRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import org.hibernate.query.SortDirection;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.StreamSupport;
+import java.util.stream.Collectors;
 
 @Service
 @Profile("!memory")
 @RequiredArgsConstructor
 public class InDatabaseLibraryService implements LibraryService {
+    private final ApplicationConfig applicationConfig;
     private final TuneRepository tuneRepository;
 
     private final TuneMapper tuneMapper;
 
-    private final ApplicationConfig applicationConfig;
-
     @Override
     public Collection<Tune> getAll(String query) {
-        return StreamSupport.stream(tuneRepository.findAll().spliterator(), false)
-                .filter(entity -> query == null || entity.getTitle().toLowerCase().contains(query.toLowerCase()))
-                .map(tuneMapper::mapEntityToDto)
-                .sorted(getComparator(applicationConfig.getApi().isAscending()))
-                .limit(applicationConfig.getApi().getMaxCollection())
-                .toList();
+        Sort.Direction direction = applicationConfig.getApi().isAscending() ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PageRequest pageRequest = PageRequest.of(0, applicationConfig.getApi().getMaxCollection(),
+                Sort.by(direction, "title"));
+
+        if (query != null) {
+            List<TuneEntity> tuneEntities = tuneRepository.searchBy(query, pageRequest);
+            return tuneEntities.stream().map(tuneMapper::mapEntityToDto).collect(Collectors.toList());
+        } else {
+            Page<TuneEntity> tuneEntities = tuneRepository.findAll(pageRequest);
+            return tuneEntities.stream().map(tuneMapper::mapEntityToDto).collect(Collectors.toList());
+        }
+    }
+
+    public Collection<Tune> getByAuthor(String author) {
+        List<TuneEntity> tuneEntities = tuneRepository.findByAuthor(author);
+        return tuneEntities.stream().map(tuneMapper::mapEntityToDto).toList();
     }
 
     @Override
@@ -69,9 +83,5 @@ public class InDatabaseLibraryService implements LibraryService {
             return true;
         }
         return false;
-    }
-
-    private Comparator<? super Tune> getComparator(boolean asc) {
-        return asc ? Comparator.comparing(Tune::getTitle) : Comparator.comparing(Tune::getTitle).reversed();
     }
 }
