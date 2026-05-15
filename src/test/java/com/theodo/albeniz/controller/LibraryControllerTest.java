@@ -3,7 +3,6 @@ package com.theodo.albeniz.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Description;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -11,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.theodo.albeniz.config.ApplicationConfig;
 import com.theodo.albeniz.dto.Tune;
 import com.theodo.albeniz.services.InMemoryLibraryService;
 
@@ -24,18 +24,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @WebMvcTest(controllers = LibraryController.class)
 @AutoConfigureMockMvc()
-@Import(value = { InMemoryLibraryService.class })
+@Import(value = { InMemoryLibraryService.class, ApplicationConfig.class })
 @ActiveProfiles(profiles = "memory")
 public class LibraryControllerTest {
         @Autowired
         private MockMvc mockMvc;
 
         @Test()
-        @Description("it should return the full library of music")
+        @DisplayName("it should return the full library of music")
         public void testGetMusicsRoute() throws Exception {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 Collection<Tune> expectedFullLibrary = List.of(
@@ -52,7 +53,7 @@ public class LibraryControllerTest {
         }
 
         @Test()
-        @Description("it should returns the information for an existing music")
+        @DisplayName("it should returns the information for an existing music")
         public void testGetOneMusic() throws Exception {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 Tune expectedTune = new Tune(UUID.fromString("2d156098-78ea-44ca-bb00-aef7060d9ee4"), "Uptown Funk",
@@ -64,7 +65,7 @@ public class LibraryControllerTest {
         }
 
         @Test()
-        @Description("it should return an empty JSON string for an non-existing music")
+        @DisplayName("it should return an empty JSON string for an non-existing music")
         public void testGetNotExistingMusic() throws Exception {
                 MvcResult mvcResponse = mockMvc.perform(get("/library/music/" + UUID.randomUUID())
                                 .contentType(MediaType.APPLICATION_JSON))
@@ -74,7 +75,7 @@ public class LibraryControllerTest {
         }
 
         @Test()
-        @Description("it should return musics where title contains 'up' (not case-sensitive) ")
+        @DisplayName("it should return musics where title contains 'up' (not case-sensitive) ")
         public void testGetMusicsWhereTitleContainsUp() throws Exception {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 Collection<Tune> expectedTunes = List.of(new Tune(
@@ -87,7 +88,7 @@ public class LibraryControllerTest {
         }
 
         @Test()
-        @Description("it should return an error message saying that title cannot be empty")
+        @DisplayName("it should return an error message saying that title cannot be empty")
         public void testTitleValidationOnAddTune() throws Exception {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 Tune emptyTitleTune = new Tune(UUID.randomUUID(), null, "Someone");

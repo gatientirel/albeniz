@@ -7,16 +7,29 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Description;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.theodo.albeniz.config.ApplicationConfig;
+import com.theodo.albeniz.config.ApplicationConfig.ApiConfiguration;
 import com.theodo.albeniz.dto.Tune;
 
 public class LibraryServiceTest {
 
+    private final ApplicationConfig applicationConfig = initializeMockApiConfig();
+
+    private static ApplicationConfig initializeMockApiConfig() {
+        ApplicationConfig appConfig = new ApplicationConfig();
+        ApiConfiguration apiConfig = new ApplicationConfig.ApiConfiguration();
+        apiConfig.setAscending(true);
+        apiConfig.setMaxCollection(3);
+        appConfig.setApi(apiConfig);
+        return appConfig;
+    }
+
     @Test()
-    @Description("it should return all tunes in library")
+    @DisplayName("it should return all tunes in library")
     void testGetAllMethod() throws Exception {
         LibraryService service = new InMemoryLibraryService();
         ObjectMapper mapper = new ObjectMapper();
@@ -32,7 +45,7 @@ public class LibraryServiceTest {
     }
 
     @Test()
-    @Description("it should return all tunes in library with title containing 'foam' ")
+    @DisplayName("it should return all tunes in library with title containing 'foam' ")
     void testGetAllWithQueryMethod() throws Exception {
         LibraryService service = new InMemoryLibraryService();
         ObjectMapper mapper = new ObjectMapper();
@@ -44,7 +57,7 @@ public class LibraryServiceTest {
     }
 
     @Test()
-    @Description("it should return tune with id 1")
+    @DisplayName("it should return tune with id 1")
     void testGetOneMethod() throws Exception {
         LibraryService service = new InMemoryLibraryService();
         ObjectMapper mapper = new ObjectMapper();
@@ -55,7 +68,7 @@ public class LibraryServiceTest {
     }
 
     @Test()
-    @Description("it should have no effect on the inMemory library")
+    @DisplayName("it should have no effect on the inMemory library")
     void testAddTuneInMemory() throws Exception {
         LibraryService service = new InMemoryLibraryService();
         Collection<Tune> libraryBeforeAdd = service.getAll(null);
@@ -65,14 +78,31 @@ public class LibraryServiceTest {
     }
 
     @Test()
-    @Description("it should add one Tune to inDatabase library, with provided informations")
+    @DisplayName("it should add one Tune to inDatabase library, with provided informations")
     void testAddTuneInDatabase() throws Exception {
-        LibraryService service = new InDatabaseLibraryService();
+        LibraryService service = new InDatabaseLibraryService(applicationConfig);
         Tune newTune = new Tune(UUID.fromString("7e4d2b98-1c21-4de9-95e6-094b18eeb86a"), "Drown", "Three Days Grace");
         int librarySizeBeforeAdd = service.getAll(null).size();
 
         service.addTune(newTune);
         int librarySizeAfterAdd = service.getAll(null).size();
         assertEquals(librarySizeBeforeAdd + 1, librarySizeAfterAdd);
+    }
+
+    @Test()
+    @DisplayName("it should add more than 3 tunes in library, then collect all and have max 3 tunes in response")
+    void testConfigMaxCollection() throws Exception {
+        LibraryService service = new InDatabaseLibraryService(applicationConfig);
+        Tune newTune1 = new Tune(UUID.randomUUID(), "Drown", "Three Days Grace");
+        Tune newTune2 = new Tune(UUID.randomUUID(), "On The Run", "Empire Fall");
+        Tune newTune3 = new Tune(UUID.randomUUID(), "again&again", "Against The Current");
+        Tune newTune4 = new Tune(UUID.randomUUID(), "again&again", "Against The Current");
+
+        service.addTune(newTune1);
+        service.addTune(newTune2);
+        service.addTune(newTune3);
+        service.addTune(newTune4);
+
+        assertEquals(applicationConfig.getApi().getMaxCollection(), service.getAll(null).size());
     }
 }

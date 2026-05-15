@@ -9,7 +9,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.theodo.albeniz.config.ApplicationConfig;
 import com.theodo.albeniz.dto.Tune;
 import com.theodo.albeniz.services.InDatabaseLibraryService;
 
@@ -20,19 +22,37 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @WebMvcTest(controllers = LibraryController.class)
 @AutoConfigureMockMvc()
-@Import(value = { InDatabaseLibraryService.class })
+@Import(value = { InDatabaseLibraryService.class, ApplicationConfig.class })
 @ActiveProfiles(profiles = "database")
 public class InDatabaseLibraryControllerTest {
         @Autowired
         private MockMvc mockMvc;
+
+        @Autowired
+        private ObjectMapper jsonMapper;
+
+        @Autowired
+        private InDatabaseLibraryService libraryService;
+
+        @BeforeEach
+        @AfterEach
+        public void setUp() {
+                Collection<Tune> all = libraryService.getAll(null);
+                for (Tune tune : all) {
+                        libraryService.deleteTune(tune.getId());
+                }
+        }
 
         @Test()
         @DisplayName("it should add a new tune to the music library")
@@ -118,5 +138,25 @@ public class InDatabaseLibraryControllerTest {
                                                 .contentType(MediaType.APPLICATION_JSON))
                                 .andExpect(status().isNotFound())
                                 .andReturn();
+        }
+
+        @Test()
+        @DisplayName("it should add more than 11 tunes in library, then collect all and have max 11 tunes in response")
+        public void testConfigMaxCollection() throws Exception {
+                Tune randomTune = new Tune(UUID.randomUUID(), "Some Tune", "Someone");
+
+                for (int i = 0; i < 12; i++) {
+                        mockMvc.perform(post("/library/music").content(jsonMapper.writeValueAsString(randomTune))
+                                        .contentType(MediaType.APPLICATION_JSON))
+                                        .andExpect(status().isOk());
+                }
+
+                MvcResult getAllResult = mockMvc.perform(get("/library/music").contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk()).andReturn();
+                String contentStr = getAllResult.getResponse().getContentAsString();
+                Collection<Tune> library = this.jsonMapper.readValue(contentStr, new TypeReference<Collection<Tune>>() {
+                });
+
+                assertEquals(11, library.size());
         }
 }
