@@ -2,9 +2,14 @@ package com.theodo.albeniz.controller;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.theodo.albeniz.dto.Tune;
@@ -13,8 +18,27 @@ import com.theodo.albeniz.dto.Tune;
 @RequestMapping("/library")
 public class LibraryController {
 
+    private final static Map<Integer, Tune> LIBRARY = new HashMap<>();
+
+    static {
+        // ADD static values (temporary)
+        LIBRARY.put(1, new Tune(1, "Thriller", "Michael J."));
+        LIBRARY.put(2, new Tune(2, "Uptown Funk", "Bruno M."));
+        LIBRARY.put(3, new Tune(3, "The Little Foam Man", "Patrick S."));
+    }
+
     @GetMapping("/music")
-    public Collection<Tune> getMusic() {
-        return Arrays.asList(new Tune("Blip", "Zizou"), new Tune("Blap", "Schuman"));
+    public Collection<Tune> getMusics(@RequestParam(required = false) String title) {
+        if (title == null) {
+            return LIBRARY.values();
+        }
+        return LIBRARY.values().stream()
+                .filter(tune -> tune.getTitle().toLowerCase().contains(title.toLowerCase()))
+                .toList();
+    }
+
+    @GetMapping("/music/{id}")
+    public Tune getMusic(@PathVariable() int id) {
+        return LIBRARY.get(id);
     }
 }
