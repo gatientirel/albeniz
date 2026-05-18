@@ -1,27 +1,21 @@
 package com.theodo.albeniz.model;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.UUID;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
+import java.util.*;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Entity(name = "APP_USER")
-@Getter()
-@Setter()
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "APP_USER")
+@Getter
+@Setter
+@Builder
 public class UserEntity implements UserDetails {
-
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,14 +24,27 @@ public class UserEntity implements UserDetails {
     @Column(name = "USER_NAME")
     private String username;
 
-    @Column(name = "PASSWORD", nullable = false)
-    @NotBlank()
+    @Column(name = "PASSWORD")
+    @JsonIgnore
     private String password;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(name = "USER_SELECTION", joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "FK_SELECTION_USER_ID")), inverseJoinColumns = @JoinColumn(name = "TUNE_ID", referencedColumnName = "ID", foreignKey = @ForeignKey(name = "FK_SELECTION_TUNE_ID")))
+    @JsonIgnore
+    private Set<TuneEntity> selection;
 
+    public void addSelection(TuneEntity tuneEntity) {
+        if (selection == null) {
+            selection = new HashSet<>();
+        }
+        selection.add(tuneEntity);
+    }
+
+    public void removeSelection(TuneEntity tuneEntity) {
+        if (selection == null) {
+            return;
+        }
+        selection.remove(tuneEntity);
     }
 
     @Override
@@ -58,6 +65,11 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
     }
 
 }

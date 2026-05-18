@@ -9,8 +9,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="TUNE")
-@Getter @Setter
+@Table(name = "TUNE")
+@Getter
+@Setter
 public class TuneEntity {
 
     @Id
@@ -26,4 +27,8 @@ public class TuneEntity {
 
     @Column(name = "RELEASE_DATE")
     private String releaseDate;
+
+    // @ManyToMany(mappedBy = "selection")
+    // @JsonIgnore
+    // private Set<UserEntity> users;
 }
