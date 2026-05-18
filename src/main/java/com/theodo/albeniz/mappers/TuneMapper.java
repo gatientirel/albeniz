@@ -7,5 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface TuneMapper {
     Tune from(TuneEntity proofFileRequestDto);
+
     TuneEntity from(Tune tune);
 }

@@ -5,16 +5,27 @@ info:
 spring:
   application:
     name: albeniz-api
+
   datasource:
     url: jdbc:postgresql://localhost:5432/albeniz_db
-    driverClassName: org.postgresql.Driver
+    driver-class-name: org.postgresql.Driver
     username: myDatabaseAdminUser
     password: aGivenAdminPassword
+
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+
+  liquibase:
+    user: myDatabaseAdminUser
+    password: aGivenAdminPassword
+
+  session:
+    store-type: none
 
 # Change Actuator base URI
 management:
@@ -23,11 +34,6 @@ management:
       base-path: /tooling
       exposure:
         include: "health,info"
-
-# Liquibase
-liquibase:
-  user: myDatabaseAdminUser
-  password: aGivenAdminPassword
 
 ## Change Server base context
 server:
