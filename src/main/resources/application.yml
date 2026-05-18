@@ -15,7 +15,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate.jdbc.lob.non_contextual_creation: true
@@ -23,9 +23,6 @@ spring:
   liquibase:
     user: myDatabaseAdminUser
     password: aGivenAdminPassword
-
-  session:
-    store-type: none
 
 # Change Actuator base URI
 management:
@@ -45,3 +42,6 @@ application:
   api:
     maxCollection: 11
     ascending: false
+  last-fm-api:
+    base-url: http://ws.audioscrobbler.com
+    api-key: 6e4570bc243deec98dc89907217698de

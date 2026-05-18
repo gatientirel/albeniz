@@ -68,7 +68,7 @@ public class AuthControllerTest {
     private void insertOneUser() throws Exception {
         mockMvc.perform(post("/users/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"user1@gmail.com\",\"password\":\"my12345pwd\"}"))
+                .content("{\"username\": \"user1@gmail.com\", \"password\": \"my12345pwd\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                         "{'username': 'user1@gmail.com'}"));

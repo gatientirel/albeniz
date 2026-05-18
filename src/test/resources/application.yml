@@ -7,5 +7,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.H2Dialect
+
+application:
+  lastFm:
+    url: http://ws.audioscrobbler.com
+    apiKey: 6e4570bc243deec98dc89907217698de

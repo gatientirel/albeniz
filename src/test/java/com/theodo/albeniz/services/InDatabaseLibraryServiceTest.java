@@ -4,11 +4,13 @@ import com.theodo.albeniz.config.ApplicationConfig;
 import com.theodo.albeniz.dto.Tune;
 import com.theodo.albeniz.mappers.TuneMapper;
 import com.theodo.albeniz.mappers.TuneMapperImpl;
+import com.theodo.albeniz.model.TuneEntity;
 import com.theodo.albeniz.repositories.TuneRepository;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
+@Import(TuneMapperImpl.class)
 class InDatabaseLibraryServiceTest {
 
     @Autowired
@@ -35,9 +38,9 @@ class InDatabaseLibraryServiceTest {
                 tuneRepository, tuneMapper);
         assertEquals(0, libraryService.getAll(null).size());
 
-        UUID uuid1 = libraryService.addTune(new Tune(null, "Hello", "World Singers"));
-        UUID uuid2 = libraryService.addTune(new Tune(null, "Hello !!!", "World Singers !!!"));
-        UUID uuid3 = libraryService.addTune(new Tune(null, "Hello !!!!!", "World Singers !!!!!"));
+        UUID uuid1 = libraryService.addTune(new Tune(null, "Hello", "World Singers", null));
+        UUID uuid2 = libraryService.addTune(new Tune(null, "Hello !!!", "World Singers !!!", null));
+        UUID uuid3 = libraryService.addTune(new Tune(null, "Hello !!!!!", "World Singers !!!!!", null));
 
         assertEquals(3, libraryService.getAll(null).size());
         assertEquals("World Singers", libraryService.getOne(uuid1).getAuthor());
@@ -52,9 +55,9 @@ class InDatabaseLibraryServiceTest {
                 tuneRepository, tuneMapper);
         assertEquals(0, libraryService.getAll(null).size());
 
-        UUID uuid1 = libraryService.addTune(new Tune(null, "Hello", "World Singers"));
-        UUID uuid2 = libraryService.addTune(new Tune(null, "Hello !!!", "World Singers !!!"));
-        UUID uuid3 = libraryService.addTune(new Tune(null, "Hello !!!!!", "World Singers !!!!!"));
+        UUID uuid1 = libraryService.addTune(new Tune(null, "Hello", "World Singers", null));
+        UUID uuid2 = libraryService.addTune(new Tune(null, "Hello !!!", "World Singers !!!", null));
+        UUID uuid3 = libraryService.addTune(new Tune(null, "Hello !!!!!", "World Singers !!!!!", null));
 
         assertEquals(3, libraryService.getAll(null).size());
 
@@ -107,9 +110,9 @@ class InDatabaseLibraryServiceTest {
                 tuneRepository, tuneMapper);
         assertEquals(0, libraryService.getAll(null).size());
 
-        libraryService.addTune(new Tune(null, "Hello", "World Singers"));
-        libraryService.addTune(new Tune(null, "Hello !!!", "World Singers"));
-        libraryService.addTune(new Tune(null, "Hello !!!!!", "Jack"));
+        libraryService.addTune(new Tune(null, "Hello", "World Singers", null));
+        libraryService.addTune(new Tune(null, "Hello !!!", "World Singers", null));
+        libraryService.addTune(new Tune(null, "Hello !!!!!", "Jack", null));
 
         assertEquals(2, libraryService.getAllFromAuthor("World Singers").size());
         assertEquals(1, libraryService.getAllFromAuthor("Jack").size());
@@ -119,7 +122,7 @@ class InDatabaseLibraryServiceTest {
         InDatabaseLibraryService dataLibraryService = new InDatabaseLibraryService(applicationConfig, tuneRepository,
                 tuneMapper);
         for (int i = 0; i < 100; i++) {
-            dataLibraryService.addTune(new Tune(UUID.randomUUID(), "Tune:" + i, "Me"));
+            dataLibraryService.addTune(new Tune(UUID.randomUUID(), "Tune:" + i, "Me", null));
         }
         return dataLibraryService;
     }

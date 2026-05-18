@@ -28,7 +28,6 @@ public class TuneEntity {
     @Column(name = "RELEASE_DATE")
     private String releaseDate;
 
-    // @ManyToMany(mappedBy = "selection")
-    // @JsonIgnore
-    // private Set<UserEntity> users;
+    @Column(name = "ALBUM")
+    private String album;
 }

@@ -14,11 +14,18 @@ import org.springframework.stereotype.Component;
 public class ApplicationConfig {
 
     private ApiConfiguration api = new ApiConfiguration();
+    private LastFmApiConfiguration lastFmApi = new LastFmApiConfiguration();
 
     @Getter
     @Setter
     public static class ApiConfiguration {
         int maxCollection = 30;
         boolean ascending = true;
+    }
+
+    @Getter
+    @Setter
+    public static class LastFmApiConfiguration {
+        String baseUrl = "baseUrl";
     }
 }

@@ -5,3 +5,5 @@ databaseChangeLog:
       file: classpath*:db/changelog/changes/user-changelog.yaml
   - include:
       file: classpath*:db/changelog/changes/selection-changelog.yaml
+  - include:
+      file: classpath*:db/changelog/changes/add-album-changelog.yaml

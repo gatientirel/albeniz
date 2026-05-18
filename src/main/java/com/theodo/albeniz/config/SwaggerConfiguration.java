@@ -17,8 +17,8 @@ public class SwaggerConfiguration {
         server.setUrl("http://localhost:8080/albeniz");
         server.setDescription("Albeniz Server");
         return new OpenAPI()
-            .components(new Components())
-            .servers(Collections.singletonList(server));
+                .components(new Components())
+                .servers(Collections.singletonList(server));
     }
 
 }
